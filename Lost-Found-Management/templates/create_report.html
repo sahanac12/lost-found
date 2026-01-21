@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Report - Lost & Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .image-preview-container {
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            margin-top: 0.5rem;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .file-input-label:hover {
+            background-color: #e8e8e8;
+            border-color: #999;
+        }
+        
+        .file-input-label.has-file {
+            border-color: #4CAF50;
+            background-color: #f1f8f4;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .remove-image-btn {
+            margin-top: 0.5rem;
+            padding: 8px 16px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .remove-image-btn:hover {
+            background-color: #c82333;
+        }
+        
+        .file-info {
+            margin-top: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .image-safety-notice {
+    font-size: 0.875rem;
+    color: #f71919;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('user_dashboard') }}" class="nav-brand">Lost & Found</a>
+            <div class="nav-menu">
+                <a href="{{ url_for('user_dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('create_report') }}" class="nav-link active">Create Report</a>
+                <a href="{{ url_for('view_items') }}" class="nav-link">Browse Items</a>
+                <a href="{{ url_for('my_claims') }}" class="nav-link">My Claims</a>
+                <a href="{{ url_for('user_logout') }}" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="section">
+            <h2>Report Lost or Found Item</h2>
+            <p style="color: #666; margin-bottom: 2rem;">Fill in the details about the item you lost or found</p>
+
+            <form method="POST" action="{{ url_for('create_report') }}" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="report_type">Report Type *</label>
+                    <select name="report_type" id="report_type" class="form-control" required>
+                        <option value="">Select Type</option>
+                        <option value="lost">Lost Item</option>
+                        <option value="found">Found Item</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Item Title *</label>
+                    <input type="text" name="title" id="title" class="form-control" 
+                           placeholder="e.g., Blue Backpack, iPhone 13, Car Keys" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea name="description" id="description" class="form-control" 
+                              placeholder="Provide detailed description of the item..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <select name="category" id="category" class="form-control" required>
+                        <option value="">Select Category</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Documents">Documents</option>
+                        <option value="Bags">Bags</option>
+                        <option value="Keys">Keys</option>
+                        <option value="Jewelry">Jewelry</option>
+                        <option value="Books">Books</option>
+                        <option value="Sports Equipment">Sports Equipment</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="item_image">Item Image (Optional)</label>
+                    <div class="file-input-wrapper">
+                        <label for="item_image" class="file-input-label" id="fileLabel">
+                            <span id="fileLabelText">📷 Click to upload image (JPG, PNG, or GIF - Max 5MB)</span>
+                        </label>
+                        <p class="image-safety-notice">Don't upload photos that reveal sensitive details about the item. This is for the safety of ownership of the item.</p>
+                        <input type="file" name="item_image" id="item_image" 
+                               accept="image/jpeg,image/png,image/gif">
+                    </div>
+                    <div class="file-info" id="fileInfo"></div>
+                    <div class="image-preview-container" id="previewContainer">
+                        <img id="imagePreview" class="image-preview" alt="Image preview">
+                        <button type="button" class="remove-image-btn" id="removeImageBtn">Remove Image</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location *</label>
+                    <input type="text" name="location" id="location" class="form-control" 
+                           placeholder="Where was the item lost/found?" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Date *</label>
+                    <input type="date" name="date" id="date" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="remarks">Additional Remarks (Optional)</label>
+                    <textarea name="remarks" id="remarks" class="form-control" 
+                              placeholder="Any additional information..."></textarea>
+                </div>
+
+                <div class="alert alert-info" style="margin-top: 2rem; margin-bottom: 1rem;">
+                    <strong>Security Verification Required:</strong> Please provide a security question and answer. This will be used to verify legitimate claimants.
+                </div>
+
+                <div class="form-group">
+                    <label for="security_question">Security Question *</label>
+                    <input type="text" name="security_question" id="security_question" class="form-control" 
+                           placeholder="e.g., What brand is this item? What color is the inside? Where did you buy it?" required>
+                    <small style="color: #666; display: block; margin-top: 0.5rem;">
+                        Create a question that only the true owner would know the answer to.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="security_answer">Security Answer *</label>
+                    <input type="text" name="security_answer" id="security_answer" class="form-control" 
+                           placeholder="Your answer to the security question" required>
+                    <small style="color: #666; display: block; margin-top: 0.5rem;">
+                        Claimants will need to answer this question correctly to claim the item.
+                    </small>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">Submit Report</button>
+                    <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Set today's date as max date
+        document.getElementById('date').max = new Date().toISOString().split('T')[0];
+
+        // Image upload handling
+        const fileInput = document.getElementById('item_image');
+        const fileLabel = document.getElementById('fileLabel');
+        const fileLabelText = document.getElementById('fileLabelText');
+        const fileInfo = document.getElementById('fileInfo');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            
+            if (file) {
+                // Validate file size (5MB max)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    fileInput.value = '';
+                    return;
+                }
+
+                // Validate file type
+                if (!file.type.match('image/(jpeg|png|gif)')) {
+                    alert('Please upload a JPG, PNG, or GIF image');
+                    fileInput.value = '';
+                    return;
+                }
+
+                // Update label
+                fileLabel.classList.add('has-file');
+                fileLabelText.textContent = '✓ Image selected';
+                
+                // Show file info
+                fileInfo.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+
+                // Preview image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        removeImageBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            fileLabel.classList.remove('has-file');
+            fileLabelText.textContent = '📷 Click to upload image (JPG, PNG, or GIF - Max 5MB)';
+            fileInfo.textContent = '';
+            previewContainer.style.display = 'none';
+            imagePreview.src = '';
+        });
+    </script>
+</body>
+</html>

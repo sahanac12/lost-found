@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Reports - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-brand">Lost & Found - Admin</a>
+            <div class="nav-menu">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('admin_claims') }}" class="nav-link">Claims</a>
+                <a href="{{ url_for('admin_handover') }}">Handover</a> 
+                <a href="{{ url_for('admin_reports') }}" class="nav-link active">Reports</a>
+                <a href="{{ url_for('admin_actions') }}" class="nav-link">Actions</a>
+                <a href="{{ url_for('admin_logout') }}" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="section">
+            <h2>All Reports</h2>
+            <p style="color: #666; margin-bottom: 2rem;">View all lost and found item reports</p>
+
+            {% if reports %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Report ID</th>
+                            <th>Type</th>
+                            <th>Item Title</th>
+                            <th>Category</th>
+                            <th>Reported By</th>
+                            <th>Report Date</th>
+                            <th>Item Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td><strong>#{{ report.report_id }}</strong></td>
+                            <td><span class="badge badge-{{ report.report_type }}">{{ report.report_type|upper }}</span></td>
+                            <td>{{ report.title }}</td>
+                            <td>{{ report.category }}</td>
+                            <td>{{ report.user_name }}</td>
+                            <td>{{ report.report_date }}</td>
+                            <td><span class="badge badge-{{ report.status }}">{{ report.status|upper }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty-state">No reports found.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

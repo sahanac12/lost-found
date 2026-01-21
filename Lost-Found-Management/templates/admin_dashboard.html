@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Lost & Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-brand">Lost & Found - Admin</a>
+            <div class="nav-menu">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link active">Dashboard</a>
+                <a href="{{ url_for('admin_claims') }}" class="nav-link">Claims</a>
+                 <a href="{{ url_for('admin_handover') }}">Handover</a> 
+                <a href="{{ url_for('admin_reports') }}" class="nav-link">Reports</a>
+                <a href="{{ url_for('admin_actions') }}" class="nav-link">Actions</a>
+                <a href="{{ url_for('admin_logout') }}" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1>Admin Dashboard</h1>
+            <p>Welcome, {{ session.name }}! Manage lost and found items.</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>TOTAL REPORTS</h3>
+                <p class="stat-number">{{ total_reports }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>TOTAL ITEMS</h3>
+                <p class="stat-number">{{ total_items }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>PENDING CLAIMS</h3>
+                <p class="stat-number">{{ pending_claims }}</p>
+            </div>
+        </div>
+
+        <!-- Recent Claims -->
+        <div class="section">
+            <h2>Recent Claim Requests</h2>
+            {% if recent_claims %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Claim ID</th>
+                            <th>Item</th>
+                            <th>Category</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for claim in recent_claims %}
+                        <tr>
+                            <td>#{{ claim.claim_id }}</td>
+                            <td>{{ claim.title }}</td>
+                            <td>{{ claim.category }}</td>
+                            <td>{{ claim.user_name }}</td>
+                            <td>{{ claim.claim_date }}</td>
+                            <td><span class="badge badge-{{ claim.status }}">{{ claim.status|upper }}</span></td>
+                            <td>
+                                {% if claim.status == 'pending' %}
+                                <a href="{{ url_for('review_claim', claim_id=claim.claim_id) }}" class="btn btn-primary" style="padding: 0.5rem 1rem;">Review</a>
+                                {% else %}
+                                <span style="color: #999;">{{ claim.status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty-state">No claim requests yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section">
+            <h2>Quick Actions</h2>
+            <div class="action-grid">
+                <div class="action-card">
+                    <h3>Review Claims</h3>
+                    <p>Approve or reject claims</p>
+                    <a href="{{ url_for('admin_claims') }}" class="btn btn-primary">View All Claims</a>
+                </div>
+                <div class="action-card">
+                    <h3>View Reports</h3>
+                    <p>See all lost & found reports</p>
+                    <a href="{{ url_for('admin_reports') }}" class="btn btn-secondary">View Reports</a>
+                </div>
+                <div class="action-card">
+                    <h3>Action History</h3>
+                    <p>View admin actions log</p>
+                    <a href="{{ url_for('admin_actions') }}" class="btn btn-secondary">View Actions</a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

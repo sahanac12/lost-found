@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Items - Lost & Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="nav-brand">Lost & Found</a>
+            <div class="nav-menu">
+                {% if session.role == 'user' %}
+                    <a href="{{ url_for('user_dashboard') }}" class="nav-link">Dashboard</a>
+                    <a href="{{ url_for('create_report') }}" class="nav-link">Create Report</a>
+                    <a href="{{ url_for('view_items') }}" class="nav-link active">Browse Items</a>
+                    <a href="{{ url_for('my_claims') }}" class="nav-link">My Claims</a>
+                    <a href="{{ url_for('user_logout') }}" class="nav-link">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('view_items') }}" class="nav-link active">Browse Items</a>
+                    <a href="{{ url_for('index') }}" class="nav-link">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="section">
+            <h2>Browse Lost & Found Items</h2>
+            <p style="color: #666; margin-bottom: 2rem;">Search for your lost items or claim found items</p>
+
+            {% if items %}
+                <div class="items-grid">
+                    {% for item in items %}
+                    <div class="item-card">
+                        <div class="item-header">
+                            <span class="badge badge-{{ item.report_type }}">{{ item.report_type|upper }}</span>
+                            <span class="badge badge-{{ item.status }}">{{ item.status|upper }}</span>
+                        </div>
+                        
+                        <!-- Image Section - ADDED HERE -->
+                        <div class="item-image-container">
+                            {% if item.image_path %}
+                                <img src="{{ url_for('static', filename='uploads/items/' + item.image_path) }}" 
+                                     alt="{{ item.title }}" 
+                                     class="item-image">
+                            {% else %}
+                                <div class="no-image-placeholder">
+                                    <span>📷</span>
+                                    <p>No Image</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <h3>{{ item.title }}</h3>
+                        <p class="item-category">{{ item.category }}</p>
+                        <p class="item-description">{{ item.description[:100] }}{% if item.description|length > 100 %}...{% endif %}</p>
+                        <div class="item-details">
+                            <p><strong>Location:</strong> {{ item.location }}</p>
+                            <p><strong>Date:</strong> {{ item.date }}</p>
+                        </div>
+                        {% if session.role == 'user' %}
+                        <a href="{{ url_for('submit_claim', item_id=item.item_id) }}" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Claim This Item</a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">No items found at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .item-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        /* Image Styles - ADDED */
+        .item-image-container {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+        }
+
+        .item-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-image-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: #f0f0f0;
+            color: #999;
+        }
+
+        .no-image-placeholder span {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-image-placeholder p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .item-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-category {
+            color: #667eea;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .item-description {
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .item-details {
+            border-top: 1px solid #dee2e6;
+            padding-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .item-details p {
+            margin-bottom: 0.5rem;
+            color: #666;
+        }
+    </style>
+</body>
+</html>

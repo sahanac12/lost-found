@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="landing-container">
+
+    <!-- LEFT SIDE -->
+    <div class="landing-left">
+        <div class="landing-brand">
+            <div class="landing-logo">LF</div>
+            <span>Lost & Found</span>
+        </div>
+
+        <h1>Find what's <span>missing.</span></h1>
+
+        <p>
+            A secure platform to report lost items, claim found belongings,
+            and verify ownership through structured validation.
+        </p>
+
+        <div class="landing-meta">
+            <span><i class="dot dot-blue"></i> Live Reports</span>
+            <span><i class="dot dot-green"></i> Secure Claims</span>
+            <span><i class="dot dot-purple"></i> Admin Verified</span>
+        </div>
+    </div>
+
+    <!-- RIGHT SIDE - ROLE SELECTION -->
+    <div class="role-selection">
+
+        <!-- USER ROLE CARD -->
+        <div class="role-card user">
+            <div class="role-header">
+                <div class="role-icon">🔍</div>
+                <div class="role-content">
+                    <h2>User Access</h2>
+                    <p>Report a loss or claim a found item</p>
+                </div>
+            </div>
+            <div class="role-actions">
+                <a href="{{ url_for('user_signup') }}" class="btn btn-primary">
+                    <span>Create Account</span>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                <a href="{{ url_for('user_login') }}" class="btn btn-secondary">
+                    <span>Sign In</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- ADMIN ROLE CARD -->
+        <div class="role-card admin">
+            <div class="role-header">
+                <div class="role-icon">🛡️</div>
+                <div class="role-content">
+                    <h2>Admin Access</h2>
+                    <p>Manage claims and verify reports</p>
+                </div>
+            </div>
+            <div class="role-actions">
+                <a href="{{ url_for('admin_login') }}" class="btn btn-admin">
+                    <span>Admin Login</span>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M6 12L10 8L6 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FEATURES SECTION (OPTIONAL) -->
+<div class="features-strip">
+    <div class="feature-item">
+        <span class="feature-icon">⚡</span>
+        <span>Quick Reports</span>
+    </div>
+    <div class="feature-item">
+        <span class="feature-icon">🔒</span>
+        <span>Secure Validation</span>
+    </div>
+    <div class="feature-item">
+        <span class="feature-icon">✓</span>
+        <span>Admin Verified</span>
+    </div>
+    <div class="feature-item">
+        <span class="feature-icon">📱</span>
+        <span>Easy to Use</span>
+    </div>
+</div>
+
+</body>
+</html>

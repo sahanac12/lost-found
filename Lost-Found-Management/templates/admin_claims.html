@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Claims - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-brand">Lost & Found - Admin</a>
+            <div class="nav-menu">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('admin_claims') }}" class="nav-link active">Claims</a>
+                <a href="{{ url_for('admin_handover') }}">Handover</a> 
+                <a href="{{ url_for('admin_reports') }}" class="nav-link">Reports</a>
+                <a href="{{ url_for('admin_actions') }}" class="nav-link">Actions</a>
+                <a href="{{ url_for('admin_logout') }}" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="section">
+            <h2>All Claim Requests</h2>
+            <p style="color: #666; margin-bottom: 2rem;">Review and manage user claim requests</p>
+
+            {% if claims %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Claim ID</th>
+                            <th>Item Title</th>
+                            <th>Category</th>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Claim Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for claim in claims %}
+                        <tr>
+                            <td><strong>#{{ claim.claim_id }}</strong></td>
+                            <td>{{ claim.title }}</td>
+                            <td>{{ claim.category }}</td>
+                            <td>{{ claim.user_name }}</td>
+                            <td>{{ claim.user_email }}</td>
+                            <td>{{ claim.claim_date }}</td>
+                            <td><span class="badge badge-{{ claim.status }}">{{ claim.status|upper }}</span></td>
+                            <td>
+                                {% if claim.status == 'pending' %}
+                                <a href="{{ url_for('review_claim', claim_id=claim.claim_id) }}" class="btn btn-primary" style="padding: 0.5rem 1rem;">Review</a>
+                                {% else %}
+                                <a href="{{ url_for('review_claim', claim_id=claim.claim_id) }}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">View</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty-state">No claim requests found.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

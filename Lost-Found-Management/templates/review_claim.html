@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Claim - Lost & Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: #6366f1;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.25s ease, color 0.25s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #6366f1;
+            color: #ffffff;
+        }
+
+        .main-content {
+            margin-top: 100px;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            color: #1f2937;
+            font-size: 28px;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .card {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card h2 {
+            color: #6366f1;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        .field label {
+            display: block;
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .field p {
+            color: #1f2937;
+            font-size: 15px;
+        }
+
+        .security-card {
+            background: linear-gradient(135deg, #fef9e7 0%, #fcf3cf 100%);
+            border: 2px solid #f1c40f;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .security-card h2 {
+            color: #f39c12;
+            margin-bottom: 20px;
+        }
+
+        .answer-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .answer-box.reporter {
+            border-left: 4px solid #3498db;
+        }
+
+        .answer-box.claimant {
+            border-left: 4px solid #e67e22;
+        }
+
+        .answer-box h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .answer-value {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .similarity-indicator {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: #e0f2fe;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #0284c7;
+            color: #075985;
+            font-size: 14px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal h2 {
+            margin: 0 0 20px 0;
+            color: #1f2937;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .item-image {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn-success,
+            .btn-danger {
+                flex: none;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Admin Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-brand">Lost & Found - Admin</a>
+            <div class="nav-menu">
+                <a href="{{ url_for('admin_dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('admin_claims') }}" class="nav-link">Claims</a>
+                <a href="{{ url_for('admin_reports') }}" class="nav-link active">Reports</a>
+                <a href="{{ url_for('admin_actions') }}" class="nav-link">Actions</a>
+                <a href="{{ url_for('admin_logout') }}" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="header">
+                <h1>Review Claim Request #{{ claim.claim_id }}</h1>
+                <span class="badge badge-{{ claim.status }}">STATUS: {{ claim.status|upper }}</span>
+            </div>
+
+            <!-- Claimant Information -->
+            <div class="card">
+                <h2>Claimant Information</h2>
+                <div class="grid-3">
+                    <div class="field">
+                        <label>Name:</label>
+                        <p>{{ claim.user_name }}</p>
+                    </div>
+                    <div class="field">
+                        <label>Email:</label>
+                        <p>{{ claim.user_email }}</p>
+                    </div>
+                    <div class="field">
+                        <label>Claim Date:</label>
+                        <p>{{ claim.claim_date }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item Details -->
+            <div class="card">
+                <h2>Item Details</h2>
+                
+                <!-- Item Image if available -->
+                {% if claim.image_path %}
+                <div class="field">
+                    <label>Item Image:</label>
+                    <img src="{{ url_for('static', filename='uploads/items/' + claim.image_path) }}" 
+                         alt="{{ claim.title }}" 
+                         class="item-image">
+                </div>
+                {% endif %}
+                
+                <div class="grid-2">
+                    <div class="field">
+                        <label>Title:</label>
+                        <p>{{ claim.title }}</p>
+                    </div>
+                    <div class="field">
+                        <label>Category:</label>
+                        <p>{{ claim.category }}</p>
+                    </div>
+                    <div class="field">
+                        <label>Description:</label>
+                        <p>{{ claim.description }}</p>
+                    </div>
+                    <div class="field">
+                        <label>Location:</label>
+                        <p>{{ claim.location }}</p>
+                    </div>
+                    <div class="field">
+                        <label>Date:</label>
+                        <p>{{ claim.date }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proof of Ownership -->
+            <div class="card">
+                <h2>Proof of Ownership</h2>
+                <p>{{ claim.proof }}</p>
+            </div>
+
+            <!-- Security Verification -->
+            <div class="security-card">
+                <h2>🔒 Security Verification</h2>
+                
+                <div class="grid-2" id="securityContainer">
+                    <p style="color: #666;">Loading security questions...</p>
+                </div>
+
+                <div class="info-box">
+                    <strong>Admin Note:</strong> Compare both answers carefully. They don't need to match exactly, but should show the claimant knows specific details about the item.
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+           <div class="btn-group">
+    <a href="{{ url_for('admin_claims') }}" class="btn btn-secondary">
+        ← Back to Claims
+    </a>
+    
+    {% if claim.status == 'pending' %}
+    <button type="button" class="btn btn-success" onclick="openActionModal('approve')">
+        ✓ Approve Claim
+    </button>
+    <button type="button" class="btn btn-danger" onclick="openActionModal('reject')">
+        ✗ Reject Claim
+    </button>
+    {% endif %}
+</div>
+        </div>
+    </div>
+
+    <!-- Action Modal -->
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">Confirm Action</h2>
+            <form id="actionForm" method="POST" action="{{ url_for('review_claim', claim_id=claim.claim_id) }}">
+                <input type="hidden" name="action_type" id="action_type">
+                <div style="margin-bottom: 20px;">
+                    <label for="remarks" style="display: block; margin-bottom: 8px; font-weight: 600;">Remarks (Optional):</label>
+                    <textarea name="remarks" id="remarks" placeholder="Add any notes or reasons for your decision..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeActionModal()" style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="confirmBtn" style="flex: 1;">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Load security questions via API
+        fetch('/api/get-security-answers/{{ claim.claim_id }}')
+            .then(response => response.json())
+            .then(data => {
+                const container = document.getElementById('securityContainer');
+                
+                if (data.success) {
+                    const reporterAnswer = data.reporter_answer.toLowerCase().trim();
+                    const claimantAnswer = data.claimant_answer.toLowerCase().trim();
+                    const answersMatch = reporterAnswer === claimantAnswer;
+                    
+                    container.innerHTML = `
+                        <!-- Reporter's Answer -->
+                        <div class="answer-box reporter">
+                            <h3>Reporter's Question & Answer</h3>
+                            <div class="field">
+                                <label>Question:</label>
+                                <p class="answer-value">${data.reporter_question}</p>
+                            </div>
+                            <div class="field">
+                                <label>Reporter's Answer:</label>
+                                <p class="answer-value">${data.reporter_answer}</p>
+                            </div>
+                        </div>
+
+                        <!-- Claimant's Answer -->
+                        <div class="answer-box claimant">
+                            <h3>Claimant's Answer</h3>
+                            <div class="field">
+                                <label>Claimant's Answer:</label>
+                                <p class="answer-value">${data.claimant_answer}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add similarity indicator after the grid
+                    const indicator = document.createElement('div');
+                    indicator.className = 'similarity-indicator';
+                    
+                    if (answersMatch) {
+                        indicator.style.cssText = 'background: #d1fae5; color: #065f46; border: 2px solid #10b981;';
+                        indicator.innerHTML = '<span style="font-size: 20px;">✓</span><span>Answers match exactly</span>';
+                    } else {
+                        indicator.style.cssText = 'background: #fef3c7; color: #92400e; border: 2px solid #f59e0b;';
+                        indicator.innerHTML = '<span style="font-size: 20px;">⚠</span><span>Answers do not match exactly - Review carefully</span>';
+                    }
+                    
+                    container.parentNode.insertBefore(indicator, container.nextSibling);
+                } else {
+                    container.innerHTML = '<p style="color: #dc2626;">Error loading security questions</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('securityContainer').innerHTML = '<p style="color: #dc2626;">Error loading security questions</p>';
+            });
+
+        function openActionModal(action) {
+            const modal = document.getElementById('actionModal');
+            const title = document.getElementById('modalTitle');
+            const actionInput = document.getElementById('action_type');
+            const confirmBtn = document.getElementById('confirmBtn');
+            
+            actionInput.value = action;
+            
+            if (action === 'approve') {
+                title.textContent = 'Approve This Claim?';
+                confirmBtn.textContent = 'Approve Claim';
+                confirmBtn.className = 'btn btn-success';
+                confirmBtn.style.flex = '1';
+            } else {
+                title.textContent = 'Reject This Claim?';
+                confirmBtn.textContent = 'Reject Claim';
+                confirmBtn.className = 'btn btn-danger';
+                confirmBtn.style.flex = '1';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeActionModal() {
+            const modal = document.getElementById('actionModal');
+            modal.style.display = 'none';
+            document.getElementById('remarks').value = '';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('actionModal');
+            if (event.target === modal) {
+                closeActionModal();
+            }
+        }
+    </script>
+</body>
+</html>

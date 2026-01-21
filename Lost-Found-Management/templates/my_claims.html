@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Claims - Lost & Found</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('user_dashboard') }}" class="nav-brand">Lost & Found</a>
+            <div class="nav-menu">
+                <a href="{{ url_for('user_dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('create_report') }}" class="nav-link">Create Report</a>
+                <a href="{{ url_for('view_items') }}" class="nav-link">Browse Items</a>
+                <a href="{{ url_for('my_claims') }}" class="nav-link active">My Claims</a>
+                <a href="{{ url_for('user_logout') }}" class="nav-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="section">
+            <h2>My Claims</h2>
+            <p style="color: #666; margin-bottom: 2rem;">Track the status of your claim requests</p>
+
+            {% if claims %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Item Title</th>
+                            <th>Category</th>
+                            <th>Claim Date</th>
+                            <th>Status</th>
+                            <th>Proof Submitted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for claim in claims %}
+                        <tr>
+                            <td><strong>{{ claim.title }}</strong></td>
+                            <td>{{ claim.category }}</td>
+                            <td>{{ claim.claim_date }}</td>
+                            <td><span class="badge badge-{{ claim.status }}">{{ claim.status|upper }}</span></td>
+                            <td>{{ claim.proof[:50] }}{% if claim.proof|length > 50 %}...{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty-state">You haven't submitted any claims yet. Browse items to submit a claim.</p>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="{{ url_for('view_items') }}" class="btn btn-primary">Browse Items</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

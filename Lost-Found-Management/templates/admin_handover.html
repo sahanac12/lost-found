@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Handover - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .handover-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .handover-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .handover-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .info-box {
+            background: #e8eaf6;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .info-box li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav style="background: linear-gradient(135deg, #f9f9fc 0%, #fbfafc 100%); padding: 15px 30px; color: rgb(119, 26, 212);">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+            <h1 style="margin: 0; font-size: 24px;">Lost & Found - Admin</h1>
+            <div style="display: flex; gap: 20px;">
+                <a href="{{ url_for('admin_dashboard') }}" style="color: rgb(119, 26, 212); text-decoration: none;">Dashboard</a>
+                <a href="{{ url_for('admin_claims') }}" style="color: rgb(119, 26, 212); text-decoration: none;">Claims</a>
+                <a href="{{ url_for('admin_handover') }}" style="color: rgb(119, 26, 212); text-decoration: none; font-weight: bold;">Handover</a>
+                <a href="{{ url_for('admin_reports') }}" style="color: rgb(119, 26, 212); text-decoration: none;">Reports</a>
+                <a href="{{ url_for('admin_actions') }}" style="color: rgb(119, 26, 212); text-decoration: none;">Actions</a>
+                <a href="{{ url_for('admin_logout') }}" style="color: rgb(119, 26, 212); text-decoration: none;">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="handover-container">
+        <h1 style="text-align: center; color: #333; margin-bottom: 40px;"> Item Handover Management</h1>
+
+        <!-- Step 1: Receive from Finder -->
+        <div class="handover-section">
+            <h2><span class="step-number">1</span> Receive Item from Finder</h2>
+            
+            <div class="info-box">
+                <strong>When the finder arrives with the item:</strong>
+                <ul>
+                    <li>Verify they have the item matching the description</li>
+                    <li>Ask them for their pickup code (they received it via email)</li>
+                    <li>Enter the code below to confirm receipt</li>
+                    <li>Store the item securely until the claimer arrives</li>
+                </ul>
+            </div>
+
+            <div class="input-group">
+                <label for="handover-code">📧 Pickup Code (from Finder)</label>
+                <input 
+                    type="text" 
+                    id="handover-code" 
+                    placeholder="Enter 8-character code" 
+                    maxlength="8">
+            </div>
+
+            <button class="btn btn-primary" onclick="verifyHandover()">
+                ✓ Confirm Item Received from Finder
+            </button>
+
+            <div id="handover-alert" class="alert"></div>
+        </div>
+
+        <!-- Step 2: Hand Over to Claimer -->
+        <div class="handover-section">
+            <h2><span class="step-number">2</span> Hand Over Item to Claimer</h2>
+
+            <div class="info-box">
+                <strong>When the claimer arrives to collect:</strong>
+                <ul>
+                    <li>Ask for their pickup code (same code as the finder)</li>
+                    <li>Verify their ID matches the claim information</li>
+                    <li>Ensure the item was already received from the finder (Step 1 complete)</li>
+                    <li>Enter the code below to complete the handover</li>
+                </ul>
+            </div>
+
+            <div class="input-group">
+                <label for="collection-code">📧 Pickup Code (from Claimer)</label>
+                <input 
+                    type="text" 
+                    id="collection-code" 
+                    placeholder="Enter 8-character code"
+                    maxlength="8">
+            </div>
+
+            <button class="btn btn-success" onclick="verifyCollection()">
+                ✓ Confirm Item Handed to Claimer
+            </button>
+
+            <div id="collection-alert" class="alert"></div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-uppercase input
+        document.getElementById('handover-code').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        document.getElementById('collection-code').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        function showAlert(elementId, message, isSuccess) {
+            const alert = document.getElementById(elementId);
+            alert.textContent = message;
+            alert.className = 'alert ' + (isSuccess ? 'alert-success' : 'alert-error');
+            alert.style.display = 'block';
+
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        async function verifyHandover() {
+            const code = document.getElementById('handover-code').value.trim();
+
+            if (code.length !== 8) {
+                showAlert('handover-alert', '⚠️ Please enter a valid 8-character code', false);
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/verify_handover', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ pickup_code: code })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('handover-alert', '✅ Item successfully received from finder!', true);
+                    document.getElementById('handover-code').value = '';
+                } else {
+                    showAlert('handover-alert', '❌ ' + (data.error || 'Verification failed'), false);
+                }
+            } catch (error) {
+                showAlert('handover-alert', '❌ Network error. Please try again.', false);
+            }
+        }
+
+        async function verifyCollection() {
+            const code = document.getElementById('collection-code').value.trim();
+
+            if (code.length !== 8) {
+                showAlert('collection-alert', '⚠️ Please enter a valid 8-character code', false);
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/verify_collection', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ pickup_code: code })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('collection-alert', '✅ Item successfully handed over to claimer! Case closed.', true);
+                    document.getElementById('collection-code').value = '';
+                } else {
+                    showAlert('collection-alert', '❌ ' + (data.error || 'Verification failed'), false);
+                }
+            } catch (error) {
+                showAlert('collection-alert', '❌ Network error. Please try again.', false);
+            }
+        }
+    </script>
+</body>
+</html>
