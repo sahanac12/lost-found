@@ -45,13 +45,8 @@ app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # PostgreSQL Database Configuration
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 5432,
-    "dbname": "lost_and_found",
-    "user": "postgres",
-    "password": "password"
-}
+def get_db():
+    return psycopg.connect(os.environ["DATABASE_URL"])
 
 
 def allowed_file(filename):
@@ -1220,3 +1215,4 @@ if __name__ == '__main__':
     init_db()
 
     app.run(debug=True)
+
