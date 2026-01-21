@@ -53,10 +53,7 @@ def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def get_db():
-    """Create database connection"""
-    conn = psycopg.connect(**DB_CONFIG)
-    return conn
+
 
 # Your existing init_db() function stays the same...
 # [Keep all your existing functions]
@@ -1215,4 +1212,5 @@ if __name__ == '__main__':
     init_db()
 
     app.run(debug=True)
+
 
