@@ -46,12 +46,13 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # PostgreSQL Database Configuration
 DB_CONFIG = {
-    'host': 'localhost',
-    'database': 'lost_found_db',
-    'user': 'postgres',
-    'password': 'postgres123',
-    'port': 5432
+    "host": "localhost",
+    "port": 5432,
+    "dbname": "lost_and_found",
+    "user": "postgres",
+    "password": "password"
 }
+
 
 def allowed_file(filename):
     """Check if file extension is allowed"""
@@ -1217,4 +1218,5 @@ def test_email():
 
 if __name__ == '__main__':
     init_db()
+
     app.run(debug=True)
