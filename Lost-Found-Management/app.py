@@ -3,8 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from functools import wraps
 from flask_mail import Mail, Message
-import psycopg2
-import psycopg2.extras
+import psycopg
+from psycopg.rows import dict_row
 from datetime import datetime, timedelta
 import os
 import string  # ADD THIS
@@ -59,7 +59,7 @@ def allowed_file(filename):
 
 def get_db():
     """Create database connection"""
-    conn = psycopg2.connect(**DB_CONFIG)
+    conn = psycopg.connect(**DB_CONFIG)
     return conn
 
 # Your existing init_db() function stays the same...
